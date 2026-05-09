@@ -4,18 +4,15 @@
   "description": "雨刮器查询系统 - Cloudflare Pages + D1",
   "scripts": {
     "dev": "wrangler pages dev public --compatibility-date=2024-01-01",
-    "deploy": "wrangler pages deploy public",
     "convert-data": "node scripts/convert-all-sheets.js",
     "db-create": "wrangler d1 create wiper_db",
     "db-init": "wrangler d1 execute wiper_db --file=schema.sql",
     "db-import": "wrangler d1 execute wiper_db --file=data-import-full.sql",
-    "db-reset": "wrangler d1 execute wiper_db --command=\"DROP TABLE IF EXISTS wipers\" && npm run db-init && npm run db-import",
     "db-stats": "wrangler d1 execute wiper_db --command=\"SELECT COUNT(*) as total, COUNT(DISTINCT brand) as brands FROM wipers\""
   },
-  "dependencies": {
-    "xlsx": "^0.18.5"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "xlsx": "^0.18.5",
     "wrangler": "^3.0.0"
   }
 }

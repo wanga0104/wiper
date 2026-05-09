@@ -1,7 +1,11 @@
+# Cloudflare Pages Configuration
+# This file is used for local development with wrangler
+# For Cloudflare Pages deployment, most settings are configured in the Cloudflare Dashboard
+
 name = "wiper-query-system"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = "public"
 
+# D1 Database Binding
 [[d1_databases]]
 binding = "DB"
 database_name = "wiper_db"
