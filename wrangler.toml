@@ -1,0 +1,10 @@
+name = "wiper-query-system"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wiper_db"
+database_id = "a707a00f-7cfa-4e8b-9272-8588f8e2f78a"
+
+[build]
+command = ""

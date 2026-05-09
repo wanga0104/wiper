@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雨刮器查询系统</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚗 雨刮器查询系统</h1>
+            <p class="subtitle">欧亚18国车型库 - 快速查找适配雨刮器</p>
+        </header>
+
+        <div class="search-section">
+            <div class="select-group">
+                <label for="brand">品牌 <span class="required">*</span></label>
+                <select id="brand" class="form-select">
+                    <option value="">请选择品牌</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="model">车型 <span class="required">*</span></label>
+                <select id="model" class="form-select" disabled>
+                    <option value="">请先选择品牌</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="code">代码 (可选)</label>
+                <select id="code" class="form-select" disabled>
+                    <option value="">请先选择车型</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="country">国家 (可选)</label>
+                <select id="country" class="form-select" disabled>
+                    <option value="">请先选择代码</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="wiki_code">维基显示代码 (可选)</label>
+                <select id="wiki_code" class="form-select" disabled>
+                    <option value="">请先选择国家</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="year">年份 (可选)</label>
+                <select id="year" class="form-select" disabled>
+                    <option value="">请先选择维基代码</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="vehicle_structure">车结构 (可选)</label>
+                <select id="vehicle_structure" class="form-select" disabled>
+                    <option value="">请先选择年份</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button id="search-btn" class="btn btn-primary" disabled>查询雨刮器</button>
+                <button id="reset-btn" class="btn btn-secondary">重置</button>
+            </div>
+        </div>
+
+        <div id="results-section" class="results-section hidden">
+            <h2>查询结果</h2>
+            <div id="results-container" class="results-container">
+            </div>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>查询中...</p>
+        </div>
+
+        <div id="error-message" class="error-message hidden"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

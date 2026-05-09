@@ -1,0 +1,11 @@
+node_modules/
+.env
+*.log
+dist/
+.wrangler/
+data-import.sql
+速卖通欧亚18国车型库.csv
+.DS_Store
+*.swp
+*.swo
+*~
