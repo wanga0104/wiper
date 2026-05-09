@@ -163,9 +163,16 @@ class WiperQueryApp {
             this.showLoading(true);
             const response = await this.fetchAPI(`/api/codes?brand=${encodeURIComponent(this.currentSelection.brand)}&model=${encodeURIComponent(model)}`);
             const codes = await response.json();
-            this.populateSelect(this.elements.code, codes, '请选择代码');
-            this.elements.code.disabled = false;
-            this.resetSubsequentSelects('code');
+            
+            if (codes && codes.length > 0) {
+                this.populateSelect(this.elements.code, codes, '请选择代码');
+                this.elements.code.disabled = false;
+                this.showField('code');
+                this.resetSubsequentSelects('code');
+            } else {
+                this.hideSubsequentFields('code');
+            }
+            
             this.showLoading(false);
         } catch (error) {
             this.showError('加载代码列表失败: ' + error.message);
@@ -186,9 +193,16 @@ class WiperQueryApp {
             this.showLoading(true);
             const response = await this.fetchAPI(`/api/countries?brand=${encodeURIComponent(this.currentSelection.brand)}&model=${encodeURIComponent(this.currentSelection.model)}&code=${encodeURIComponent(code)}`);
             const countries = await response.json();
-            this.populateSelect(this.elements.country, countries, '请选择国家');
-            this.elements.country.disabled = false;
-            this.resetSubsequentSelects('country');
+            
+            if (countries && countries.length > 0) {
+                this.populateSelect(this.elements.country, countries, '请选择国家');
+                this.elements.country.disabled = false;
+                this.showField('country');
+                this.resetSubsequentSelects('country');
+            } else {
+                this.hideSubsequentFields('country');
+            }
+            
             this.showLoading(false);
         } catch (error) {
             this.showError('加载国家列表失败: ' + error.message);
@@ -209,9 +223,16 @@ class WiperQueryApp {
             this.showLoading(true);
             const response = await this.fetchAPI(`/api/wiki-codes?brand=${encodeURIComponent(this.currentSelection.brand)}&model=${encodeURIComponent(this.currentSelection.model)}&code=${encodeURIComponent(this.currentSelection.code)}&country=${encodeURIComponent(country)}`);
             const wikiCodes = await response.json();
-            this.populateSelect(this.elements.wiki_code, wikiCodes, '请选择维基显示代码');
-            this.elements.wiki_code.disabled = false;
-            this.resetSubsequentSelects('wiki_code');
+            
+            if (wikiCodes && wikiCodes.length > 0) {
+                this.populateSelect(this.elements.wiki_code, wikiCodes, '请选择维基显示代码');
+                this.elements.wiki_code.disabled = false;
+                this.showField('wiki_code');
+                this.resetSubsequentSelects('wiki_code');
+            } else {
+                this.hideSubsequentFields('wiki_code');
+            }
+            
             this.showLoading(false);
         } catch (error) {
             this.showError('加载维基代码列表失败: ' + error.message);
@@ -232,9 +253,16 @@ class WiperQueryApp {
             this.showLoading(true);
             const response = await this.fetchAPI(`/api/years?brand=${encodeURIComponent(this.currentSelection.brand)}&model=${encodeURIComponent(this.currentSelection.model)}&code=${encodeURIComponent(this.currentSelection.code)}&country=${encodeURIComponent(this.currentSelection.country)}&wiki_code=${encodeURIComponent(wikiCode)}`);
             const years = await response.json();
-            this.populateSelect(this.elements.year, years, '请选择年份');
-            this.elements.year.disabled = false;
-            this.resetSubsequentSelects('year');
+            
+            if (years && years.length > 0) {
+                this.populateSelect(this.elements.year, years, '请选择年份');
+                this.elements.year.disabled = false;
+                this.showField('year');
+                this.resetSubsequentSelects('year');
+            } else {
+                this.hideSubsequentFields('year');
+            }
+            
             this.showLoading(false);
         } catch (error) {
             this.showError('加载年份列表失败: ' + error.message);
@@ -255,8 +283,15 @@ class WiperQueryApp {
             this.showLoading(true);
             const response = await this.fetchAPI(`/api/vehicle-structures?brand=${encodeURIComponent(this.currentSelection.brand)}&model=${encodeURIComponent(this.currentSelection.model)}&code=${encodeURIComponent(this.currentSelection.code)}&country=${encodeURIComponent(this.currentSelection.country)}&wiki_code=${encodeURIComponent(this.currentSelection.wiki_code)}&year=${encodeURIComponent(year)}`);
             const structures = await response.json();
-            this.populateSelect(this.elements.vehicle_structure, structures, '请选择车结构');
-            this.elements.vehicle_structure.disabled = false;
+            
+            if (structures && structures.length > 0) {
+                this.populateSelect(this.elements.vehicle_structure, structures, '请选择车结构');
+                this.elements.vehicle_structure.disabled = false;
+                this.showField('vehicle_structure');
+            } else {
+                this.hideSubsequentFields('vehicle_structure');
+            }
+            
             this.showLoading(false);
         } catch (error) {
             this.showError('加载车结构列表失败: ' + error.message);
@@ -291,14 +326,35 @@ class WiperQueryApp {
         
         for (let i = lastIndex + 1; i < selectOrder.length; i++) {
             const select = this.elements[selectOrder[i]];
-            select.innerHTML = '';
-            select.disabled = true;
+            if (select) {
+                select.innerHTML = '';
+                select.disabled = true;
+            }
             this.currentSelection[selectOrder[i]] = '';
         }
         
         this.updateSearchButtonState();
         this.elements.resultsSection.classList.add('hidden');
         this.elements.resultsContainer.innerHTML = '';
+    }
+
+    showField(fieldName) {
+        const fieldGroup = document.getElementById(`${fieldName}-group`);
+        if (fieldGroup) {
+            fieldGroup.classList.remove('hidden');
+        }
+    }
+
+    hideSubsequentFields(lastField) {
+        const fieldOrder = ['code', 'country', 'wiki_code', 'year', 'vehicle_structure'];
+        const lastIndex = fieldOrder.indexOf(lastField);
+        
+        for (let i = lastIndex + 1; i < fieldOrder.length; i++) {
+            const fieldGroup = document.getElementById(`${fieldOrder[i]}-group`);
+            if (fieldGroup) {
+                fieldGroup.classList.add('hidden');
+            }
+        }
     }
 
     async search() {
@@ -406,7 +462,17 @@ class WiperQueryApp {
         this.elements.resultsContainer.innerHTML = '';
         this.elements.errorMessage.classList.add('hidden');
         
-        this.loadBrands();
+        this.hideAllOptionalFields();
+    }
+
+    hideAllOptionalFields() {
+        const fieldOrder = ['code', 'country', 'wiki_code', 'year', 'vehicle_structure'];
+        fieldOrder.forEach(fieldName => {
+            const fieldGroup = document.getElementById(`${fieldName}-group`);
+            if (fieldGroup) {
+                fieldGroup.classList.add('hidden');
+            }
+        });
     }
 
     showLoading(show) {
