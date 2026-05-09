@@ -1,5 +1,6 @@
 class WiperQueryApp {
     constructor() {
+        this.i18n = new I18n();
         this.currentSelection = {
             brand: '',
             model: '',
@@ -12,6 +13,7 @@ class WiperQueryApp {
         
         this.initElements();
         this.attachEventListeners();
+        this.applyLanguage();
         this.loadBrands();
     }
 
@@ -31,7 +33,8 @@ class WiperQueryApp {
             resultsSection: document.getElementById('results-section'),
             resultsContainer: document.getElementById('results-container'),
             loading: document.getElementById('loading'),
-            errorMessage: document.getElementById('error-message')
+            errorMessage: document.getElementById('error-message'),
+            langSwitcher: document.getElementById('lang-switcher')
         };
         
         this.debounceTimer = null;
@@ -51,6 +54,67 @@ class WiperQueryApp {
         this.elements.vehicle_structure.addEventListener('change', (e) => this.handleVehicleStructureChange(e));
         this.elements.searchBtn.addEventListener('click', () => this.search());
         this.elements.resetBtn.addEventListener('click', () => this.reset());
+        
+        this.elements.langSwitcher.addEventListener('click', (e) => {
+            if (e.target.classList.contains('lang-btn')) {
+                this.switchLanguage(e.target.dataset.lang);
+            }
+        });
+    }
+
+    switchLanguage(lang) {
+        this.i18n.setLanguage(lang);
+        this.applyLanguage();
+    }
+
+    applyLanguage() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            el.textContent = this.i18n.t(key);
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            el.placeholder = this.i18n.t(key);
+        });
+
+        document.querySelectorAll('[data-i18n-title]').forEach(el => {
+            const key = el.getAttribute('data-i18n-title');
+            el.title = this.i18n.t(key);
+        });
+
+        document.documentElement.lang = this.i18n.currentLang === 'zh' ? 'zh-CN' : this.i18n.currentLang;
+        document.title = this.i18n.t('title');
+
+        this.updateLangButtons();
+        this.updateSelectPlaceholders();
+    }
+
+    updateLangButtons() {
+        this.elements.langSwitcher.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === this.i18n.currentLang);
+        });
+    }
+
+    updateSelectPlaceholders() {
+        if (this.elements.model.disabled) {
+            this.elements.model.innerHTML = `<option value="">${this.i18n.t('selectBrandFirst')}</option>`;
+        }
+        if (this.elements.code.disabled) {
+            this.elements.code.innerHTML = `<option value="">${this.i18n.t('selectCode')}</option>`;
+        }
+        if (this.elements.country.disabled) {
+            this.elements.country.innerHTML = `<option value="">${this.i18n.t('selectCountry')}</option>`;
+        }
+        if (this.elements.wiki_code.disabled) {
+            this.elements.wiki_code.innerHTML = `<option value="">${this.i18n.t('selectWikiCode')}</option>`;
+        }
+        if (this.elements.year.disabled) {
+            this.elements.year.innerHTML = `<option value="">${this.i18n.t('selectYear')}</option>`;
+        }
+        if (this.elements.vehicle_structure.disabled) {
+            this.elements.vehicle_structure.innerHTML = `<option value="">${this.i18n.t('selectStructure')}</option>`;
+        }
     }
 
     async loadBrands() {
@@ -61,7 +125,7 @@ class WiperQueryApp {
             this.populateDatalist(this.elements.brandList, brands);
             this.elements.brand.disabled = false;
         } catch (error) {
-            this.showError('加载品牌列表失败: ' + error.message);
+            this.showError(this.i18n.t('brandLoadError') + error.message);
         }
     }
 
@@ -139,13 +203,13 @@ class WiperQueryApp {
             this.showLoading(true);
             const response = await this.fetchAPI(`/api/models?brand=${encodeURIComponent(brand)}`);
             const models = await response.json();
-            this.populateSelect(this.elements.model, models, '请选择车型');
+            this.populateSelect(this.elements.model, models, this.i18n.t('selectModel'));
             this.elements.model.disabled = false;
             this.resetSubsequentSelects('model');
             this.updateSearchButtonState();
             this.showLoading(false);
         } catch (error) {
-            this.showError('加载车型列表失败: ' + error.message);
+            this.showError(this.i18n.t('modelLoadError') + error.message);
             this.showLoading(false);
         }
     }
@@ -165,7 +229,7 @@ class WiperQueryApp {
             const codes = await response.json();
             
             if (codes && codes.length > 0) {
-                this.populateSelect(this.elements.code, codes, '请选择代码');
+                this.populateSelect(this.elements.code, codes, this.i18n.t('selectCode'));
                 this.elements.code.disabled = false;
                 this.showField('code');
                 this.resetSubsequentSelects('code');
@@ -175,7 +239,7 @@ class WiperQueryApp {
             
             this.showLoading(false);
         } catch (error) {
-            this.showError('加载代码列表失败: ' + error.message);
+            this.showError(this.i18n.t('codeLoadError') + error.message);
             this.showLoading(false);
         }
     }
@@ -195,7 +259,7 @@ class WiperQueryApp {
             const countries = await response.json();
             
             if (countries && countries.length > 0) {
-                this.populateSelect(this.elements.country, countries, '请选择国家');
+                this.populateSelect(this.elements.country, countries, this.i18n.t('selectCountry'));
                 this.elements.country.disabled = false;
                 this.showField('country');
                 this.resetSubsequentSelects('country');
@@ -205,7 +269,7 @@ class WiperQueryApp {
             
             this.showLoading(false);
         } catch (error) {
-            this.showError('加载国家列表失败: ' + error.message);
+            this.showError(this.i18n.t('countryLoadError') + error.message);
             this.showLoading(false);
         }
     }
@@ -225,7 +289,7 @@ class WiperQueryApp {
             const wikiCodes = await response.json();
             
             if (wikiCodes && wikiCodes.length > 0) {
-                this.populateSelect(this.elements.wiki_code, wikiCodes, '请选择维基显示代码');
+                this.populateSelect(this.elements.wiki_code, wikiCodes, this.i18n.t('selectWikiCode'));
                 this.elements.wiki_code.disabled = false;
                 this.showField('wiki_code');
                 this.resetSubsequentSelects('wiki_code');
@@ -235,7 +299,7 @@ class WiperQueryApp {
             
             this.showLoading(false);
         } catch (error) {
-            this.showError('加载维基代码列表失败: ' + error.message);
+            this.showError(this.i18n.t('wikiCodeLoadError') + error.message);
             this.showLoading(false);
         }
     }
@@ -255,7 +319,7 @@ class WiperQueryApp {
             const years = await response.json();
             
             if (years && years.length > 0) {
-                this.populateSelect(this.elements.year, years, '请选择年份');
+                this.populateSelect(this.elements.year, years, this.i18n.t('selectYear'));
                 this.elements.year.disabled = false;
                 this.showField('year');
                 this.resetSubsequentSelects('year');
@@ -265,7 +329,7 @@ class WiperQueryApp {
             
             this.showLoading(false);
         } catch (error) {
-            this.showError('加载年份列表失败: ' + error.message);
+            this.showError(this.i18n.t('yearLoadError') + error.message);
             this.showLoading(false);
         }
     }
@@ -285,7 +349,7 @@ class WiperQueryApp {
             const structures = await response.json();
             
             if (structures && structures.length > 0) {
-                this.populateSelect(this.elements.vehicle_structure, structures, '请选择车结构');
+                this.populateSelect(this.elements.vehicle_structure, structures, this.i18n.t('selectStructure'));
                 this.elements.vehicle_structure.disabled = false;
                 this.showField('vehicle_structure');
             } else {
@@ -294,7 +358,7 @@ class WiperQueryApp {
             
             this.showLoading(false);
         } catch (error) {
-            this.showError('加载车结构列表失败: ' + error.message);
+            this.showError(this.i18n.t('structureLoadError') + error.message);
             this.showLoading(false);
         }
     }
@@ -315,7 +379,7 @@ class WiperQueryApp {
         options.forEach(option => {
             const optionElement = document.createElement('option');
             optionElement.value = option;
-            optionElement.textContent = option || '未设置';
+            optionElement.textContent = option || this.i18n.t('notSet');
             selectElement.appendChild(optionElement);
         });
     }
@@ -359,7 +423,7 @@ class WiperQueryApp {
 
     async search() {
         if (!this.currentSelection.brand || !this.currentSelection.model) {
-            this.showError('请至少选择品牌和车型');
+            this.showError(this.i18n.t('selectBrandModel'));
             return;
         }
 
@@ -380,7 +444,7 @@ class WiperQueryApp {
             this.displayResults(results);
             this.showLoading(false);
         } catch (error) {
-            this.showError('查询失败: ' + error.message);
+            this.showError(this.i18n.t('searchError') + error.message);
             this.showLoading(false);
         }
     }
@@ -389,10 +453,12 @@ class WiperQueryApp {
         this.elements.resultsContainer.innerHTML = '';
         
         if (!results || results.length === 0) {
-            this.elements.resultsContainer.innerHTML = '<div class="no-results">未找到匹配的雨刮器信息</div>';
+            this.elements.resultsContainer.innerHTML = `<div class="no-results">${this.i18n.t('noResults')}</div>`;
             this.elements.resultsSection.classList.remove('hidden');
             return;
         }
+
+        const t = this.i18n.t.bind(this.i18n);
 
         results.forEach(result => {
             const card = document.createElement('div');
@@ -402,36 +468,36 @@ class WiperQueryApp {
                 <h3>${result.brand} ${result.model}</h3>
                 <div class="result-details">
                     <div class="result-item">
-                        <strong>代码</strong>
-                        <span>${result.code || '未设置'}</span>
+                        <strong>${t('code')}</strong>
+                        <span>${result.code || t('notSet')}</span>
                     </div>
                     <div class="result-item">
-                        <strong>国家</strong>
-                        <span>${result.country || '未设置'}</span>
+                        <strong>${t('country')}</strong>
+                        <span>${result.country || t('notSet')}</span>
                     </div>
                     <div class="result-item">
-                        <strong>维基代码</strong>
-                        <span>${result.wiki_code || '未设置'}</span>
+                        <strong>${t('wikiCode')}</strong>
+                        <span>${result.wiki_code || t('notSet')}</span>
                     </div>
                     <div class="result-item">
-                        <strong>年份</strong>
-                        <span>${result.year || '未设置'}</span>
+                        <strong>${t('year')}</strong>
+                        <span>${result.year || t('notSet')}</span>
                     </div>
                     <div class="result-item">
-                        <strong>车结构</strong>
-                        <span>${result.vehicle_structure || '未设置'}</span>
+                        <strong>${t('vehicleStructure')}</strong>
+                        <span>${result.vehicle_structure || t('notSet')}</span>
                     </div>
                 </div>
                 <div class="wiper-info">
-                    <h4>适配雨刮器规格</h4>
+                    <h4>${t('wiperSpec')}</h4>
                     <div class="wiper-specs">
                         <div class="wiper-spec">
-                            <strong>${result.wiper_size || '未知'}</strong>
-                            <span>尺寸</span>
+                            <strong>${result.wiper_size || t('unknown')}</strong>
+                            <span>${t('size')}</span>
                         </div>
                         <div class="wiper-spec">
-                            <strong>${result.connector_type || '未知'}</strong>
-                            <span>接头类型</span>
+                            <strong>${result.connector_type || t('unknown')}</strong>
+                            <span>${t('connectorType')}</span>
                         </div>
                     </div>
                 </div>
@@ -463,6 +529,7 @@ class WiperQueryApp {
         this.elements.errorMessage.classList.add('hidden');
         
         this.hideAllOptionalFields();
+        this.updateSelectPlaceholders();
     }
 
     hideAllOptionalFields() {

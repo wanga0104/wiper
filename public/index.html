@@ -9,94 +9,93 @@
 <body>
     <div class="container">
         <header>
-            <h1>🚗 雨刮器查询系统</h1>
-            <p class="subtitle">快速查找适配雨刮器</p>
+            <div class="header-row">
+                <div>
+                    <h1>🚗 <span data-i18n="title">雨刮器查询系统</span></h1>
+                    <p class="subtitle"><span data-i18n="subtitle">快速查找适配雨刮器</span></p>
+                </div>
+                <div class="lang-switcher" id="lang-switcher">
+                    <button class="lang-btn" data-lang="zh">中文</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ru">РУС</button>
+                </div>
+            </div>
         </header>
 
         <div class="search-section">
             <div class="select-group">
-                <label for="brand">品牌 <span class="required">*</span></label>
+                <label for="brand"><span data-i18n="brand">品牌</span> <span class="required">*</span></label>
                 <div class="brand-input-container">
-                    <input type="text" id="brand" class="form-input" list="brand-list" placeholder="输入品牌名称或点击选择">
+                    <input type="text" id="brand" class="form-input" list="brand-list" data-i18n-placeholder="brandPlaceholder" placeholder="输入品牌名称或点击选择">
                     <datalist id="brand-list">
                     </datalist>
-                    <button type="button" id="brand-dropdown-btn" class="dropdown-btn" title="显示所有品牌">▼</button>
+                    <button type="button" id="brand-dropdown-btn" class="dropdown-btn" data-i18n-title="showAllBrands" title="显示所有品牌">▼</button>
                 </div>
             </div>
 
             <div class="select-group">
-                <label for="model">车型 <span class="required">*</span></label>
+                <label for="model"><span data-i18n="model">车型</span> <span class="required">*</span></label>
                 <select id="model" class="form-select" disabled>
                     <option value="">请先选择品牌</option>
                 </select>
             </div>
 
             <div class="select-group hidden" id="code-group">
-                <label for="code">代码</label>
+                <label for="code"><span data-i18n="code">代码</span></label>
                 <select id="code" class="form-select" disabled>
                     <option value="">请选择代码</option>
                 </select>
             </div>
 
             <div class="select-group hidden" id="country-group">
-                <label for="country">国家</label>
+                <label for="country"><span data-i18n="country">国家</span></label>
                 <select id="country" class="form-select" disabled>
                     <option value="">请选择国家</option>
                 </select>
             </div>
 
             <div class="select-group hidden" id="wiki_code-group">
-                <label for="wiki_code">维基显示代码</label>
+                <label for="wiki_code"><span data-i18n="wikiCode">维基显示代码</span></label>
                 <select id="wiki_code" class="form-select" disabled>
                     <option value="">请选择维基代码</option>
                 </select>
             </div>
 
             <div class="select-group hidden" id="year-group">
-                <label for="year">年份</label>
+                <label for="year"><span data-i18n="year">年份</span></label>
                 <select id="year" class="form-select" disabled>
                     <option value="">请选择年份</option>
                 </select>
             </div>
 
             <div class="select-group hidden" id="vehicle_structure-group">
-                <label for="vehicle_structure">车结构</label>
+                <label for="vehicle_structure"><span data-i18n="vehicleStructure">车结构</span></label>
                 <select id="vehicle_structure" class="form-select" disabled>
                     <option value="">请选择车结构</option>
                 </select>
             </div>
 
             <div class="button-group">
-                <button id="search-btn" class="btn btn-primary" disabled>查询雨刮器</button>
-                <button id="reset-btn" class="btn btn-secondary">重置</button>
+                <button id="search-btn" class="btn btn-primary" disabled data-i18n="searchBtn">查询雨刮器</button>
+                <button id="reset-btn" class="btn btn-secondary" data-i18n="resetBtn">重置</button>
             </div>
         </div>
 
         <div id="results-section" class="results-section hidden">
-            <h2>查询结果</h2>
+            <h2 data-i18n="resultsTitle">查询结果</h2>
             <div id="results-container" class="results-container">
             </div>
         </div>
 
         <div id="loading" class="loading hidden">
             <div class="spinner"></div>
-            <p>查询中...</p>
+            <p data-i18n="loading">查询中...</p>
         </div>
 
         <div id="error-message" class="error-message hidden"></div>
     </div>
 
-    <script>
-        // 检查URL参数是否启用调试模式
-        const urlParams = new URLSearchParams(window.location.search);
-        const debugMode = urlParams.get('debug') === 'true';
-        
-        if (debugMode) {
-            console.log('🐛 调试模式已启用');
-            document.write('<script src="debug-script.js"><\/script>');
-        } else {
-            document.write('<script src="script.js"><\/script>');
-        }
-    </script>
+    <script src="i18n.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

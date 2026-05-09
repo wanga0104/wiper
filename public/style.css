@@ -26,6 +26,46 @@ header {
     margin-bottom: 40px;
 }
 
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.header-row > div:first-child {
+    flex: 1;
+}
+
+.lang-switcher {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.lang-btn {
+    padding: 8px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+.lang-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.lang-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+}
+
 header h1 {
     color: #667eea;
     font-size: 2.5em;
@@ -339,6 +379,15 @@ option {
 @media (max-width: 768px) {
     .container {
         padding: 20px;
+    }
+    
+    .header-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .lang-switcher {
+        margin-bottom: 10px;
     }
     
     header h1 {
