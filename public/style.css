@@ -87,6 +87,39 @@ header h1 {
     color: #999;
 }
 
+.form-input {
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1em;
+    background-color: white;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.form-input:hover {
+    border-color: #667eea;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input::placeholder {
+    color: #999;
+}
+
+datalist {
+    display: none;
+}
+
+option {
+    padding: 10px;
+    font-size: 1em;
+}
+
 .button-group {
     grid-column: 1 / -1;
     display: flex;

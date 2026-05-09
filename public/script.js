@@ -18,6 +18,7 @@ class WiperQueryApp {
     initElements() {
         this.elements = {
             brand: document.getElementById('brand'),
+            brandList: document.getElementById('brand-list'),
             model: document.getElementById('model'),
             code: document.getElementById('code'),
             country: document.getElementById('country'),
@@ -31,9 +32,12 @@ class WiperQueryApp {
             loading: document.getElementById('loading'),
             errorMessage: document.getElementById('error-message')
         };
+        
+        this.debounceTimer = null;
     }
 
     attachEventListeners() {
+        this.elements.brand.addEventListener('input', (e) => this.handleBrandInput(e));
         this.elements.brand.addEventListener('change', (e) => this.handleBrandChange(e));
         this.elements.model.addEventListener('change', (e) => this.handleModelChange(e));
         this.elements.code.addEventListener('change', (e) => this.handleCodeChange(e));
@@ -49,11 +53,50 @@ class WiperQueryApp {
         try {
             const response = await this.fetchAPI('/api/brands');
             const brands = await response.json();
-            this.populateSelect(this.elements.brand, brands, '请选择品牌');
+            this.populateDatalist(this.elements.brandList, brands);
             this.elements.brand.disabled = false;
         } catch (error) {
             this.showError('加载品牌列表失败: ' + error.message);
         }
+    }
+
+    handleBrandInput(event) {
+        const value = event.target.value.trim();
+        
+        clearTimeout(this.debounceTimer);
+        
+        if (!value) {
+            this.resetSubsequentSelects('brand');
+            this.updateSearchButtonState();
+            return;
+        }
+        
+        this.debounceTimer = setTimeout(() => {
+            this.filterDatalistOptions(value);
+        }, 300);
+    }
+
+    filterDatalistOptions(searchTerm) {
+        const options = this.elements.brandList.querySelectorAll('option');
+        const lowerSearchTerm = searchTerm.toLowerCase();
+        
+        options.forEach(option => {
+            const value = option.value.toLowerCase();
+            if (value.includes(lowerSearchTerm)) {
+                option.style.display = '';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    }
+
+    populateDatalist(datalistElement, options) {
+        datalistElement.innerHTML = '';
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option;
+            datalistElement.appendChild(optionElement);
+        });
     }
 
     async handleBrandChange(event) {
@@ -324,13 +367,13 @@ class WiperQueryApp {
         });
 
         Object.values(this.elements).forEach(element => {
-            if (element.tagName === 'SELECT') {
+            if (element && element.tagName === 'SELECT') {
                 element.innerHTML = '';
                 element.disabled = true;
             }
         });
 
-        this.elements.brand.innerHTML = '<option value="">请选择品牌</option>';
+        this.elements.brand.value = '';
         this.elements.brand.disabled = false;
         this.elements.searchBtn.disabled = true;
         this.elements.resultsSection.classList.add('hidden');
