@@ -83,6 +83,17 @@
         <div id="error-message" class="error-message hidden"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // 检查URL参数是否启用调试模式
+        const urlParams = new URLSearchParams(window.location.search);
+        const debugMode = urlParams.get('debug') === 'true';
+        
+        if (debugMode) {
+            console.log('🐛 调试模式已启用');
+            document.write('<script src="debug-script.js"><\/script>');
+        } else {
+            document.write('<script src="script.js"><\/script>');
+        }
+    </script>
 </body>
 </html>
