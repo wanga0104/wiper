@@ -16,9 +16,12 @@
         <div class="search-section">
             <div class="select-group">
                 <label for="brand">品牌 <span class="required">*</span></label>
-                <input type="text" id="brand" class="form-input" list="brand-list" placeholder="输入或选择品牌">
-                <datalist id="brand-list">
-                </datalist>
+                <div class="brand-input-container">
+                    <input type="text" id="brand" class="form-input" list="brand-list" placeholder="输入品牌名称或点击选择">
+                    <datalist id="brand-list">
+                    </datalist>
+                    <button type="button" id="brand-dropdown-btn" class="dropdown-btn" title="显示所有品牌">▼</button>
+                </div>
             </div>
 
             <div class="select-group">

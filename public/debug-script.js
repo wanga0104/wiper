@@ -23,6 +23,7 @@ class WiperQueryApp {
     initElements() {
         this.elements = {
             brand: document.getElementById('brand'),
+            brandDropdownBtn: document.getElementById('brand-dropdown-btn'),
             brandList: document.getElementById('brand-list'),
             model: document.getElementById('model'),
             code: document.getElementById('code'),
@@ -39,6 +40,7 @@ class WiperQueryApp {
         };
         
         this.debounceTimer = null;
+        this.brands = [];
         
         // 检查关键元素是否存在
         if (!this.elements.brand) {
@@ -55,7 +57,13 @@ class WiperQueryApp {
         if (this.elements.brand) {
             this.elements.brand.addEventListener('input', (e) => this.handleBrandInput(e));
             this.elements.brand.addEventListener('change', (e) => this.handleBrandChange(e));
+            this.elements.brand.addEventListener('focus', (e) => this.handleBrandFocus(e));
             console.log('✓ 品牌输入框事件已绑定');
+        }
+        
+        if (this.elements.brandDropdownBtn) {
+            this.elements.brandDropdownBtn.addEventListener('click', (e) => this.showAllBrands(e));
+            console.log('✓ 品牌下拉按钮事件已绑定');
         }
         
         if (this.elements.model) {
@@ -99,6 +107,7 @@ class WiperQueryApp {
             console.log('📡 API响应状态:', response.status);
             
             const brands = await response.json();
+            this.brands = brands;
             console.log('📊 加载到的品牌数量:', brands.length);
             console.log('📋 品牌列表示例:', brands.slice(0, 5));
             
@@ -111,6 +120,30 @@ class WiperQueryApp {
         } catch (error) {
             console.error('❌ 加载品牌列表失败:', error);
             this.showError('加载品牌列表失败: ' + error.message);
+        }
+    }
+
+    handleBrandFocus(event) {
+        console.log('🎯 品牌输入框获得焦点');
+        if (!this.elements.brand.value) {
+            this.showAllBrands();
+        }
+    }
+
+    showAllBrands(event) {
+        console.log('📋 显示所有品牌');
+        
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        this.elements.brand.focus();
+        this.populateDatalist(this.elements.brandList, this.brands);
+        
+        if (!this.elements.brand.value) {
+            this.elements.brand.value = ' ';
+            this.elements.brand.value = '';
         }
     }
 

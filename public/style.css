@@ -120,6 +120,38 @@ option {
     font-size: 1em;
 }
 
+.brand-input-container {
+    display: flex;
+    gap: 8px;
+    position: relative;
+}
+
+.brand-input-container .form-input {
+    flex: 1;
+}
+
+.dropdown-btn {
+    padding: 12px 16px;
+    background-color: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    transition: all 0.3s ease;
+    min-width: 50px;
+}
+
+.dropdown-btn:hover {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+.dropdown-btn:active {
+    transform: scale(0.98);
+}
+
 .button-group {
     grid-column: 1 / -1;
     display: flex;

@@ -18,6 +18,7 @@ class WiperQueryApp {
     initElements() {
         this.elements = {
             brand: document.getElementById('brand'),
+            brandDropdownBtn: document.getElementById('brand-dropdown-btn'),
             brandList: document.getElementById('brand-list'),
             model: document.getElementById('model'),
             code: document.getElementById('code'),
@@ -34,11 +35,14 @@ class WiperQueryApp {
         };
         
         this.debounceTimer = null;
+        this.brands = [];
     }
 
     attachEventListeners() {
         this.elements.brand.addEventListener('input', (e) => this.handleBrandInput(e));
         this.elements.brand.addEventListener('change', (e) => this.handleBrandChange(e));
+        this.elements.brand.addEventListener('focus', (e) => this.handleBrandFocus(e));
+        this.elements.brandDropdownBtn.addEventListener('click', (e) => this.showAllBrands(e));
         this.elements.model.addEventListener('change', (e) => this.handleModelChange(e));
         this.elements.code.addEventListener('change', (e) => this.handleCodeChange(e));
         this.elements.country.addEventListener('change', (e) => this.handleCountryChange(e));
@@ -53,10 +57,32 @@ class WiperQueryApp {
         try {
             const response = await this.fetchAPI('/api/brands');
             const brands = await response.json();
+            this.brands = brands;
             this.populateDatalist(this.elements.brandList, brands);
             this.elements.brand.disabled = false;
         } catch (error) {
             this.showError('加载品牌列表失败: ' + error.message);
+        }
+    }
+
+    handleBrandFocus(event) {
+        if (!this.elements.brand.value) {
+            this.showAllBrands();
+        }
+    }
+
+    showAllBrands(event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
+        this.elements.brand.focus();
+        this.populateDatalist(this.elements.brandList, this.brands);
+        
+        if (!this.elements.brand.value) {
+            this.elements.brand.value = ' ';
+            this.elements.brand.value = '';
         }
     }
 
